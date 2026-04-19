@@ -3,12 +3,6 @@ from pathlib import Path
 from main.utils import load_plugins
 import logging
 from . import bot
-
-import glob
-from pathlib import Path
-from main.utils import load_plugins
-import logging
-from . import bot
 import app  # <-- Add this line
 
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
