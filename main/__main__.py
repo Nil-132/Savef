@@ -4,6 +4,13 @@ from main.utils import load_plugins
 import logging
 from . import bot
 
+import glob
+from pathlib import Path
+from main.utils import load_plugins
+import logging
+from . import bot
+import app  # <-- Add this line
+
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
@@ -15,7 +22,6 @@ for name in files:
         plugin_name = patt.stem
         load_plugins(plugin_name.replace(".py", ""))
 
-#Don't be a thief 
 print("Successfully deployed!")
 
 if __name__ == "__main__":
