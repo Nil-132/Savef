@@ -3,11 +3,12 @@ from pathlib import Path
 from main.utils import load_plugins
 import logging
 from . import bot
-import app  # <-- Add this line
+from . import app  # <-- Relative import is correct
 
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
+# Start the web server in a background thread
 app.keep_alive()
 
 path = "main/plugins/*.py"
