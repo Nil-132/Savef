@@ -8,6 +8,8 @@ import app  # <-- Add this line
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
+app.keep_alive()
+
 path = "main/plugins/*.py"
 files = glob.glob(path)
 for name in files:
