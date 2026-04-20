@@ -23,3 +23,7 @@ print("Successfully deployed!")
 
 if __name__ == "__main__":
     bot.run_until_disconnected()
+    # Keep the main thread alive so the Flask thread continues running
+    import time
+    while True:
+        time.sleep(1)
