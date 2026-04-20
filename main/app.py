@@ -8,8 +8,11 @@ app = Flask(__name__)
 def home():
     return "Bot is running!"
 
+@app.route('/health')          # 🆕 Health check
+def health():
+    return "OK"
+
 def run():
-    # Render sets the PORT environment variable automatically. Default is 10000.
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
 
