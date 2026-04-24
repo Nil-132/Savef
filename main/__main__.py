@@ -1,16 +1,19 @@
+import asyncio
 import glob
+import logging
+import os
+import sys
 from pathlib import Path
 from main.utils import load_plugins
-import logging
-from . import bot
-from . import app  # <-- Relative import is correct
+from . import bot                # Telethon client (already exists)
+# from . import user             # Uncomment if you have a Pyrogram client
 
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
-# Start the web server in a background thread
-app.keep_alive()
-
+# -------------------------------------------------------------------
+# Load plugins (can stay at module level)
+# -------------------------------------------------------------------
 path = "main/plugins/*.py"
 files = glob.glob(path)
 for name in files:
@@ -21,9 +24,34 @@ for name in files:
 
 print("Successfully deployed!")
 
+
 if __name__ == "__main__":
-    bot.run_until_disconnected()
-    # Keep the main thread alive so the Flask thread continues running
-    import time
-    while True:
-        time.sleep(1)
+    # 1. Validate required environment variables EARLY
+    required = ["API_ID", "API_HASH", "SESSION", "BOT_TOKEN"]
+    missing = [v for v in required if not os.environ.get(v)]
+    if missing:
+        print(f"❌ Missing environment variables: {', '.join(missing)}")
+        sys.exit(1)
+
+    # 2. Start the Flask keep‑alive server
+    from main.app import keep_alive
+    keep_alive()
+    print("Flask keep‑alive started.")
+
+    # 3. Async runner for all clients
+    async def main():
+        # Start Telethon client
+        await bot.start()
+        # If you have a Pyrogram client (e.g., named `user`), uncomment:
+        # await user.start()
+
+        # Wait until all clients disconnect concurrently
+        await asyncio.gather(
+            bot.disconnected,
+            # user.disconnected,   # uncomment if needed
+        )
+
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Bot stopped manually.")
