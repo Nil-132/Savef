@@ -5,14 +5,13 @@ import os
 import sys
 from pathlib import Path
 from main.utils import load_plugins
-from . import bot                # Telethon client (already exists)
-# from . import user             # Uncomment if you have a Pyrogram client
+from . import bot, userbot, Bot   # all three clients from __init__
 
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
 # -------------------------------------------------------------------
-# Load plugins (can stay at module level)
+# Load plugins (remains at module level)
 # -------------------------------------------------------------------
 path = "main/plugins/*.py"
 files = glob.glob(path)
@@ -40,15 +39,20 @@ if __name__ == "__main__":
 
     # 3. Async runner for all clients
     async def main():
-        # Start Telethon client
-        await bot.start()
-        # If you have a Pyrogram client (e.g., named `user`), uncomment:
-        # await user.start()
+        # Start Telethon bot (needs explicit bot_token because it wasn't passed earlier)
+        await bot.start(bot_token=os.environ['BOT_TOKEN'])
 
-        # Wait until all clients disconnect concurrently
+        # Start Pyrogram userbot (string session)
+        await userbot.start()
+
+        # Start Pyrogram bot (bot token already provided in Client initialization)
+        await Bot.start()
+
+        # Wait until all clients disconnect – keeps the event loop alive
         await asyncio.gather(
             bot.disconnected,
-            # user.disconnected,   # uncomment if needed
+            userbot.disconnected,
+            Bot.disconnected,
         )
 
     try:
